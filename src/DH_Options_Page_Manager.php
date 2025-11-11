@@ -25,7 +25,7 @@ class DH_Options_Page_Manager
         }
 
         // CREATE A SINGLE acf/init HOOK to register all pages
-        add_action('acf/include_fields', function () {
+        add_action('acf/init', function () {
             foreach (self::$pages as $page) {
                 $page->init_registration();
             }
