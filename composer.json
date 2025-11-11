@@ -1,0 +1,32 @@
+{
+    "name": "dh_man/dhead-wp",
+    "description": "A collection of classes to manage CPTs, Taxonomies, ACF Blocks, and Options Pages in WordPress.",
+    "type": "library",
+    "license": "GPL-2.0-or-later",
+    "autoload": {
+        "psr-4": {
+            "DHead_WP\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "require": {
+        "php": ">=7.4",
+        "wpackagist-plugin/secure-custom-fields": "^6.4"
+    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://wpackagist.org"
+        }
+    ],
+    "extra": {
+    "installer-paths": {
+        "vendor/{$name}/": ["type:wordpress-plugin"]
+    }
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true
+        }
+    }
+}

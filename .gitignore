@@ -1,0 +1,13 @@
+# Composer
+/vendor/
+/composer.lock
+/vendor-bin/
+
+# IDE files (Visual Studio Code, PHPStorm, etc.)
+.idea/
+.vscode/
+*.iml
+
+# Local/OS files
+.DS_Store
+Thumbs.db
