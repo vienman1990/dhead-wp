@@ -200,6 +200,6 @@ class DH_Block_Builder
         $context['wp_block'] = $wp_block;
 
         // Render Blade view (Sử dụng tên view đã lưu trong $this->view)
-        echo \Roots\view($this->view, $context);
+        echo \Roots\view($this->view, ['context' => $context]);
     }
 }
