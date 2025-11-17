@@ -182,7 +182,7 @@ class DH_Block_Builder
     public function render_blade_view(array $block, string $content = '', bool $is_preview = false, int $post_id = 0, $wp_block = null): void
     {
         // Kiểm tra xem hàm view() của Sage có tồn tại không.
-        if (!function_exists('\App\view')) {
+        if (!function_exists('\Roots\view')) {
             // Log lỗi hoặc render fallback nếu Sage chưa sẵn sàng.
             echo 'Blade rendering is not available.';
             return;
@@ -200,6 +200,6 @@ class DH_Block_Builder
         $context['wp_block'] = $wp_block;
 
         // Render Blade view (Sử dụng tên view đã lưu trong $this->view)
-        echo \App\view($this->view, $context);
+        echo \Roots\view($this->view, $context);
     }
 }
