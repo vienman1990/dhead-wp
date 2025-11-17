@@ -12,6 +12,7 @@ class DH_Block_Builder
     protected string $name;
     protected string $title = '';
     protected string $description = '';
+    public string $mode = 'edit';
     protected string $icon = 'block-default';
     protected string $category = 'formatting';
     protected ?string $render_template = null;
@@ -126,7 +127,7 @@ class DH_Block_Builder
             'category'        => $this->category,
             'icon'            => $this->icon,
             'supports'        => $this->supports,
-            'mode'            => 'edit',
+            'mode'            => $this->mode,
         ];
 
         // THÊM render_callback NẾU CÓ VIEW BLADE
