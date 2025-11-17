@@ -12,7 +12,7 @@ class DH_Block_Builder
     protected string $name;
     protected string $title = '';
     protected string $description = '';
-    public string $mode = 'edit';
+    protected string $mode = 'edit';
     protected string $icon = 'block-default';
     protected string $category = 'formatting';
     protected ?string $render_template = null;
@@ -69,6 +69,12 @@ class DH_Block_Builder
     public function supports(array $supports): self
     {
         $this->supports = array_merge($this->supports, $supports);
+        return $this;
+    }
+
+    public function mode(string $mode): self
+    {
+        $this->mode = $mode;
         return $this;
     }
 
