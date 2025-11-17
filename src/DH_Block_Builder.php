@@ -15,6 +15,7 @@ class DH_Block_Builder
     protected string $icon = 'block-default';
     protected string $category = 'formatting';
     protected ?string $render_template = null;
+    protected ?string $view = null;
     protected array $supports = [
         'align' => true,
         'anchor' => true,
@@ -71,21 +72,26 @@ class DH_Block_Builder
     }
 
     /**
-     * Sets the path to the template file used for rendering the block.
+     * Sets the Blade view name used for rendering the block.
+     * @param string|null $view_name The Blade view name (e.g., 'blocks.hero').
+     * @return self
+     */
+    public function render_blade(?string $view_name = null): self // Tên này đã quen thuộc
+    {
+        $this->view = $view_name;
+        $this->render_template = null; // Đảm bảo cái còn lại là null
+        return $this;
+    }
+
+    /**
+     * Sets the path to the traditional PHP template file used for rendering the block.
      * @param string|null $path The absolute path to the render file.
      * @return self
      */
     public function render(?string $path = null): self
     {
-        // If a path is provided, use it.
-        if ($path) {
-            $this->render_template = $path;
-        } else {
-            // Note: When using Block_Auto_Registrar, the template path should be set
-            // in the block.php file explicitly, or handled by the Registrar.
-            // Keeping this simple for the Builder pattern.
-            $this->render_template = null;
-        }
+        $this->render_template = $path;
+        $this->view = null; // Đảm bảo cái còn lại là null
         return $this;
     }
 
@@ -113,16 +119,25 @@ class DH_Block_Builder
             return;
         }
 
-        acf_register_block_type([
+        $args = [
             'name'            => $this->name,
             'title'           => $this->title ?: ucfirst($this->name),
             'description'     => $this->description,
-            'render_template' => $this->render_template,
             'category'        => $this->category,
             'icon'            => $this->icon,
             'supports'        => $this->supports,
             'mode'            => 'edit',
-        ]);
+        ];
+
+        // THÊM render_callback NẾU CÓ VIEW BLADE
+        if ($this->view) {
+             $args['render_callback'] = [$this, 'render_blade_view']; // Trỏ đến phương thức render_blade()
+        } else if ($this->render_template) {
+             $args['render_template'] = $this->render_template; // Giữ lại cho trường hợp dùng PHP template
+        }
+
+
+        acf_register_block_type($args);
     }
 
     /**
@@ -153,5 +168,38 @@ class DH_Block_Builder
                 ],
             ],
         ]);
+    }
+
+    /**
+     * Renders the Blade view for the block.
+     *
+     * @param array $block The block settings and attributes.
+     * @param string $content The block content.
+     * @param bool $is_preview True during editor preview.
+     * @param int $post_id The current post ID.
+     * @param WP_Block $wp_block The WP_Block object.
+     */
+    public function render_blade_view(array $block, string $content = '', bool $is_preview = false, int $post_id = 0, $wp_block = null): void
+    {
+        // Kiểm tra xem hàm view() của Sage có tồn tại không.
+        if (!function_exists('\App\view')) {
+            // Log lỗi hoặc render fallback nếu Sage chưa sẵn sàng.
+            echo 'Blade rendering is not available.';
+            return;
+        }
+
+        // Lấy dữ liệu trường ACF (fields)
+        $fields = get_fields();
+        $context = is_array($fields) ? $fields : [];
+
+        // Thêm các biến context tiêu chuẩn của block
+        $context['block'] = $block;
+        $context['content'] = $content;
+        $context['is_preview'] = $is_preview;
+        $context['post_id'] = $post_id;
+        $context['wp_block'] = $wp_block;
+
+        // Render Blade view (Sử dụng tên view đã lưu trong $this->view)
+        echo \App\view($this->view, $context);
     }
 }
